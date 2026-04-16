@@ -1,0 +1,39 @@
+### Cadastro de Cliente Real
+
+### Usuario 1
+POST http://localhost:3333/clients
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Content-Type: application/json
+
+{
+  "name": "Empresa ABC",
+  "email": "contato@abc.com",
+  "phone": "77777-3333"
+}
+
+### Usuario 2
+POST http://localhost:3333/clients
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Content-Type: application/json
+
+{
+  "name": "Empresa DEF",
+  "email": "contato@def.com",
+  "phone": "99999-4444"
+}
+
+#---------------------------------------------------
+### Listar Meus Clientes 
+
+### Usuario 1
+GET http://localhost:3333/clients
+Authorization: Bearer <TOKKEN>
+
+### Usuario 2
+GET http://localhost:3333/clients
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+
+
+### Deletar um Cliente (e todas as suas tarefas por cascata)
+DELETE http://localhost:3333/clients/1
+Authorization: Bearer SEU_TOKEN_AQUI

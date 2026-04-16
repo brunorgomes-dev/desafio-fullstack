@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  
+  // 1>N
+  clients   Client[]
+  
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String?
+  
+  // Novos campos para a Etapa 4
+  cep       String?
+  street    String?
+  number    String?
+  neighbor  String?
+  city      String?
+  state     String?
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  tasks     Task[]
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  
+  // Enum TaskStatus
+  status      Status   @default(PENDING) // Referenciando o Enum abaixo
+  
+  dueDate     DateTime?
+  clientId    Int
+  client      Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Definir os estados universais
+enum Status {
+  PENDING
+  DOING
+  DONE
+}

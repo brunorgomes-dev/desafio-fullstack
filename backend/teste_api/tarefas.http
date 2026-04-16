@@ -1,0 +1,47 @@
+### Criar Tarefa
+
+### Qualquer cliente
+POST http://localhost:3333/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Content-Type: application/json
+
+{
+  "title": "Relatório do Protótipo",
+  "description": "Relatório detalhado do Protótipo",
+  "dueDate": "2026-05-25T10:00:00Z",
+  "clientId": 2
+}
+
+### Qualquer cliente
+POST http://localhost:3333/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Content-Type: application/json
+
+{
+  "title": "Desenvolver do Protótipo",
+  "description": "Criar telas iniciais do Protótipo",
+  "dueDate": "2026-05-30T10:00:00Z",
+  "clientId": 2
+}
+
+### Listar Tarefas de um Cliente
+GET http://localhost:3333/tasks/client/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+
+### Atualizar Status de uma Tarefa
+PATCH http://localhost:3333/tasks/2/status
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Content-Type: application/json
+
+{
+  "status": "DONE"
+}
+
+
+### Deletar uma Tarefa Específica
+DELETE http://localhost:3333/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+
+###
+GET http://localhost:3333/tasks?status=PENDING
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI

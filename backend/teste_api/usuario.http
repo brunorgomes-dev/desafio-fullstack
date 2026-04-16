@@ -1,0 +1,42 @@
+### Testar Cadastro de Usuário
+
+### Usuario 1
+POST http://localhost:3333/auth/register
+Content-Type: application/json
+
+{
+  "name": "Bruno Costa",
+  "email": "costa@teste.com",
+  "password": "senha123"
+}
+
+### Usuario 2
+POST http://localhost:3333/auth/register
+Content-Type: application/json
+
+{
+  "name": "Suely Gomes",
+  "email": "gomes@teste.com",
+  "password": "senha123"
+}
+
+#---------------------------------------------------
+### Testar Login
+
+### Usuario 1
+POST http://localhost:3333/auth/login
+Content-Type: application/json
+
+{
+  "email": "costa@teste.com",
+  "password": "senha123"
+}
+
+### Usuario 2
+POST http://localhost:3333/auth/login
+Content-Type: application/json
+
+{
+  "email": "gomes@teste.com",
+  "password": "senha123"
+}

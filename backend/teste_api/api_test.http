@@ -1,0 +1,8 @@
+### Testar Acesso Protegido (Substitua o TOKEN abaixo pelo que você recebeu no Login)
+POST http://localhost:3333/clients
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicm9kcmlndWVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjEwNDM5MywiZXhwIjoxNzc2MTkwNzkzfQ.959oT_aJXPe0IWxVPJPD_b2UGtuQ_n8jXtyjt3gyKSI
+Content-Type: application/json
+
+{
+  "name": "Cliente Teste"
+}
