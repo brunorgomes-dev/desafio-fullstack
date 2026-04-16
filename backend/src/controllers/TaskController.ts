@@ -44,6 +44,15 @@ export const getTasks = async (req: Request, res: Response) => {
         // Filtro 3: Se o usuário enviou status, filtramos (o Prisma valida o Enum)
         ...(status && { status: status as any })
       },
+      // Incluimos os dados basicos do cliente para facilitar a exibicao no frontend
+      include: {
+        client: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -51,6 +60,66 @@ export const getTasks = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Erro no getTasks:", error);
     return res.status(500).json({ error: 'Erro ao buscar tarefas filtradas.' });
+  }
+};
+
+export const updateTask = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description, status, dueDate, clientId } = req.body;
+    const userId = (req as any).user.id;
+
+    // Primeiro garantimos que a tarefa pertence a um cliente do usuario logado
+    const taskExists = await prisma.task.findFirst({
+      where: {
+        id: Number(id),
+        client: {
+          userId
+        }
+      }
+    });
+
+    if (!taskExists) {
+      return res.status(404).json({ error: 'Tarefa nao encontrada.' });
+    }
+
+    // Se o cliente for alterado, validamos se o novo cliente tambem pertence ao usuario
+    if (clientId) {
+      const clientExists = await prisma.client.findFirst({
+        where: {
+          id: Number(clientId),
+          userId
+        }
+      });
+
+      if (!clientExists) {
+        return res.status(404).json({ error: 'Cliente nao encontrado para vincular a tarefa.' });
+      }
+    }
+
+    const updatedTask = await prisma.task.update({
+      where: { id: Number(id) },
+      data: {
+        title,
+        description,
+        status,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        clientId: Number(clientId)
+      },
+      include: {
+        client: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    return res.json(updatedTask);
+  } catch (error) {
+    console.error("Erro no updateTask:", error);
+    return res.status(500).json({ error: 'Erro ao atualizar tarefa.' });
   }
 };
 
