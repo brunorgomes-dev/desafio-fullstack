@@ -2,18 +2,18 @@
 
 ### Usuario 1
 POST http://localhost:3333/clients
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoiY29zdGFAdGVzdGUuY29tIiwiaWF0IjoxNzc2MzU1NDg5LCJleHAiOjE3NzY0NDE4ODl9.BqxhPNdgKpozFLkDm9Ilrsy4wLv8OJRWsYSmr1V0mHg
 Content-Type: application/json
 
 {
   "name": "Empresa ABC",
   "email": "contato@abc.com",
-  "phone": "77777-3333"
+  "phone": "44444-6666"
 }
 
 ### Usuario 2
 POST http://localhost:3333/clients
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoiY29zdGFAdGVzdGUuY29tIiwiaWF0IjoxNzc2MzU1NDg5LCJleHAiOjE3NzY0NDE4ODl9.BqxhPNdgKpozFLkDm9Ilrsy4wLv8OJRWsYSmr1V0mHg
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 
 ### Usuario 1
 GET http://localhost:3333/clients
-Authorization: Bearer <TOKKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoiY29zdGFAdGVzdGUuY29tIiwiaWF0IjoxNzc2MzU1NDg5LCJleHAiOjE3NzY0NDE4ODl9.BqxhPNdgKpozFLkDm9Ilrsy4wLv8OJRWsYSmr1V0mHg
 
 ### Usuario 2
 GET http://localhost:3333/clients
@@ -37,3 +37,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtY
 ### Deletar um Cliente (e todas as suas tarefas por cascata)
 DELETE http://localhost:3333/clients/1
 Authorization: Bearer SEU_TOKEN_AQUI
+
+### Testar Consulta de CEP
+GET http://localhost:3333/clients/cep/01001000
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoiY29zdGFAdGVzdGUuY29tIiwiaWF0IjoxNzc2MzU1Nzc0LCJleHAiOjE3NzY0NDIxNzR9.7S2KtsuWO3dGN1q8ZC_0IE5Yao0UaZIfs01DPd-595Y

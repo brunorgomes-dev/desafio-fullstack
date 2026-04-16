@@ -56,6 +56,7 @@ export const getClients = async (req: Request, res: Response) => {
 export const searchCep = async (req: Request, res: Response) => {
   try {
     const { cep } = req.params;
+    console.log("CEP Recebido no Backend:", cep);
     const cleanCep = cep.replace(/\D/g, ''); // Limpa pontos e traços
 
     if (cleanCep.length !== 8) {
