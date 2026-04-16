@@ -53,9 +53,55 @@ export const getClients = async (req: Request, res: Response) => {
   }
 };
 
+export const updateClient = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, cep, street, number, neighbor, city, state } = req.body;
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Usuário não autenticado.' });
+    }
+
+    // Primeiro garantimos que o cliente pertence ao usuário logado
+    const clientExists = await prisma.client.findFirst({
+      where: {
+        id: Number(id),
+        userId: Number(userId)
+      }
+    });
+
+    if (!clientExists) {
+      return res.status(404).json({ error: 'Cliente não encontrado.' });
+    }
+
+    // Atualizamos todos os campos editáveis mantendo o mesmo padrão do cadastro
+    const updatedClient = await prisma.client.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        email,
+        phone,
+        cep,
+        street,
+        number,
+        neighbor,
+        city,
+        state
+      }
+    });
+
+    return res.json(updatedClient);
+  } catch (error) {
+    console.error("Erro no updateClient:", error);
+    return res.status(500).json({ error: 'Erro ao atualizar cliente.' });
+  }
+};
+
 export const searchCep = async (req: Request, res: Response) => {
   try {
-    const { cep } = req.params;
+    // Garantimos que o CEP seja tratado sempre como texto antes da limpeza
+    const cep = String(req.params.cep || '');
     console.log("CEP Recebido no Backend:", cep);
     const cleanCep = cep.replace(/\D/g, ''); // Limpa pontos e traços
 

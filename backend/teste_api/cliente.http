@@ -33,6 +33,22 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtY
 GET http://localhost:3333/clients
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoiZmVybmFuZGVzQHRlc3RlLmNvbSIsImlhdCI6MTc3NjE5NjY4MSwiZXhwIjoxNzc2MjgzMDgxfQ.laaqft-8hBJ7207g-R383wh2xuWXEThprWMCHRADKFI
 
+### Atualizar Cliente
+PUT http://localhost:3333/clients/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImVtYWlsIjoiY29zdGFAdGVzdGUuY29tIiwiaWF0IjoxNzc2MzcwNzY2LCJleHAiOjE3NzY0NTcxNjZ9.ZI0lHOIJr-gj6pesVg00ltsdJDgSQoW35PtRWMJgFok
+Content-Type: application/json
+
+{
+  "name": "Empresa DEF Atualizada",
+  "email": "contato@def.com",
+  "phone": "99999-4444",
+  "cep": "01001000",
+  "street": "Praça da Sé",
+  "number": "100",
+  "neighbor": "Sé",
+  "city": "São Paulo",
+  "state": "SP"
+}
 
 ### Deletar um Cliente (e todas as suas tarefas por cascata)
 DELETE http://localhost:3333/clients/1

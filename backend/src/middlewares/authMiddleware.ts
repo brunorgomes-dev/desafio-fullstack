@@ -10,9 +10,15 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
   const [, token] = authHeader.split(' ');
 
+  // Se o header vier fora do padrão Bearer token, interrompemos antes da validação
+  if (!token) {
+    return res.status(401).json({ error: 'Token não fornecido.' });
+  }
+
   try {
-    const secret = process.env.JWT_SECRET || 'fallback_secret';
-    const decoded = jwt.verify(token, secret) as { userId: number };
+    // Mantemos um fallback para desenvolvimento local quando a variável não estiver definida
+    const secret = process.env.JWT_SECRET ?? 'fallback_secret';
+    const decoded = jwt.verify(token, secret) as unknown as { userId: number };
 
     (req as any).user = { id: decoded.userId };
 
