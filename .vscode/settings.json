@@ -1,3 +1,4 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "cmake.sourceDirectory": "C:/Users/Brunno/Documents/Projetos/Desafio FullStack/desafio-fullstack/mobile/linux"
 }
