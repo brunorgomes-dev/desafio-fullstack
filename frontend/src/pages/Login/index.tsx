@@ -55,6 +55,14 @@ export const Login: React.FC = () => {
           >
             Entrar no Sistema
           </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/register')}
+            className="w-full flex justify-center py-2 px-4 border border-blue-200 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          >
+            Criar conta
+          </button>
         </form>
       </div>
     </div>

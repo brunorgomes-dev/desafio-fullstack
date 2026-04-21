@@ -1,25 +1,10 @@
-import 'dotenv/config'; 
-import express from 'express';
-import cors from 'cors';
-import authRoutes from './routes/authRoutes';
-import clientRoutes from './routes/clientRoutes';
-import taskRoutes from './routes/taskRoutes';
+import 'dotenv/config';
 
-const app = express();
+import { app } from './app';
+import { logInfo } from './utils/logger';
 
-app.use(cors());
-app.use(express.json());
+const PORT = Number(process.env.PORT || 3333);
 
-// Rotas
-app.use('/auth', authRoutes);
-app.use('/clients', clientRoutes);
-app.use('/tasks', taskRoutes);
-
-app.get('/', (req, res) => {
-  return res.json({ message: "API do Desafio Fullstack rodando!" });
-});
-
-const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  logInfo('server.started', { port: PORT });
 });

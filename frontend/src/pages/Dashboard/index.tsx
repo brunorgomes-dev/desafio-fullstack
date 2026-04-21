@@ -93,6 +93,14 @@ type Notification = {
   message: string;
 };
 
+type ActionMenu = {
+  entity: 'client' | 'task';
+  id: number;
+  x: number;
+  y: number;
+  placement: 'top' | 'bottom';
+};
+
 const emptyFormData: FormData = {
   name: '',
   email: '',
@@ -214,7 +222,7 @@ export const Dashboard = () => {
   const [taskSearchTerm, setTaskSearchTerm] = useState('');
   const [taskStatusFilter, setTaskStatusFilter] = useState('');
   const [taskClientFilter, setTaskClientFilter] = useState('');
-  const [openActionMenuId, setOpenActionMenuId] = useState<number | null>(null);
+  const [openActionMenu, setOpenActionMenu] = useState<ActionMenu | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [taskModalMode, setTaskModalMode] = useState<'create' | 'edit'>('create');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -247,7 +255,7 @@ export const Dashboard = () => {
   useEffect(() => {
     const handleCloseMenus = () => {
       setUserMenuOpen(false);
-      setOpenActionMenuId(null);
+      setOpenActionMenu(null);
     };
 
     document.addEventListener('click', handleCloseMenus);
@@ -340,6 +348,14 @@ export const Dashboard = () => {
   });
   const pendingTasksCount = tasks.filter((task) => task.status === 'PENDING').length;
   const doingTasksCount = tasks.filter((task) => task.status === 'DOING').length;
+  const actionMenuClient =
+    openActionMenu?.entity === 'client'
+      ? clients.find((client) => client.id === openActionMenu.id) || null
+      : null;
+  const actionMenuTask =
+    openActionMenu?.entity === 'task'
+      ? tasks.find((task) => task.id === openActionMenu.id) || null
+      : null;
 
   const resetForm = () => {
     setFormData(emptyFormData);
@@ -373,13 +389,13 @@ export const Dashboard = () => {
       city: client.city || '',
       state: client.state || ''
     });
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
     setFormModalOpen(true);
   };
 
   const handleOpenDeleteModal = (client: Client) => {
     setClientToDelete(client);
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
     setDeleteModalOpen(true);
   };
 
@@ -415,13 +431,13 @@ export const Dashboard = () => {
       dueDate: task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : '',
       clientId: String(task.clientId)
     });
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
     setTaskModalOpen(true);
   };
 
   const handleOpenDeleteTaskModal = (task: Task) => {
     setTaskToDelete(task);
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
     setTaskDeleteModalOpen(true);
   };
 
@@ -547,6 +563,31 @@ export const Dashboard = () => {
     if (status === 'DONE') return 'bg-emerald-100 text-emerald-700';
     if (status === 'DOING') return 'bg-amber-100 text-amber-700';
     return 'bg-slate-100 text-slate-700';
+  };
+
+  const handleToggleActionMenu = (
+    entity: ActionMenu['entity'],
+    id: number,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.stopPropagation();
+
+    if (openActionMenu?.entity === entity && openActionMenu.id === id) {
+      setOpenActionMenu(null);
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const estimatedMenuHeight = 120;
+    const canOpenBottom = rect.bottom + 8 + estimatedMenuHeight <= window.innerHeight - 8;
+
+    setOpenActionMenu({
+      entity,
+      id,
+      x: rect.right,
+      y: canOpenBottom ? rect.bottom + 8 : rect.top - 8,
+      placement: canOpenBottom ? 'bottom' : 'top'
+    });
   };
 
   const renderDashboardContent = () => (
@@ -705,37 +746,13 @@ export const Dashboard = () => {
                       </td>
 
                       <td className="px-6 py-4 text-center">
-                        <div className="relative inline-flex" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
-                            onClick={() => setOpenActionMenuId(openActionMenuId === client.id ? null : client.id)}
-                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
-                          >
-                            <MoreVertical size={18} />
-                          </button>
-
-                          {openActionMenuId === client.id && (
-                            <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-30">
-                              <button
-                                type="button"
-                                onClick={() => handleOpenEditModal(client)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
-                              >
-                                <Pencil size={16} />
-                                <span>Editar cliente</span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => handleOpenDeleteModal(client)}
-                                className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
-                              >
-                                <Trash2 size={16} />
-                                <span>Excluir cliente</span>
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={(event) => handleToggleActionMenu('client', client.id, event)}
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
+                        >
+                          <MoreVertical size={18} />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -872,37 +889,13 @@ export const Dashboard = () => {
                     </td>
 
                     <td className="px-6 py-4 text-center">
-                      <div className="relative inline-flex" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          type="button"
-                          onClick={() => setOpenActionMenuId(openActionMenuId === task.id ? null : task.id)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
-                        >
-                          <MoreVertical size={18} />
-                        </button>
-
-                        {openActionMenuId === task.id && (
-                          <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-30">
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEditTaskModal(task)}
-                              className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
-                            >
-                              <Pencil size={16} />
-                              <span>Editar tarefa</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleOpenDeleteTaskModal(task)}
-                              className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
-                            >
-                              <Trash2 size={16} />
-                              <span>Excluir tarefa</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={(event) => handleToggleActionMenu('task', task.id, event)}
+                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -1024,6 +1017,70 @@ export const Dashboard = () => {
             </div>
           ))}
         </div>
+
+        {openActionMenu && (
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setOpenActionMenu(null)}
+          >
+            <div
+              className="absolute w-44 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-50"
+              style={{
+                top: `${openActionMenu.y}px`,
+                left: `${openActionMenu.x}px`,
+                transform:
+                  openActionMenu.placement === 'bottom'
+                    ? 'translateX(-100%)'
+                    : 'translate(-100%, -100%)'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {openActionMenu.entity === 'client' && actionMenuClient && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditModal(actionMenuClient)}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+                  >
+                    <Pencil size={16} />
+                    <span>Editar cliente</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenDeleteModal(actionMenuClient)}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={16} />
+                    <span>Excluir cliente</span>
+                  </button>
+                </>
+              )}
+
+              {openActionMenu.entity === 'task' && actionMenuTask && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditTaskModal(actionMenuTask)}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+                  >
+                    <Pencil size={16} />
+                    <span>Editar tarefa</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenDeleteTaskModal(actionMenuTask)}
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={16} />
+                    <span>Excluir tarefa</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-6xl mx-auto">{renderActiveContent()}</div>

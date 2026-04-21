@@ -1,50 +1,47 @@
 import { Request, Response } from 'express';
+
 import prisma from '../config/database';
+import { logError, logInfo, logWarn } from '../utils/logger';
 
 export const createTask = async (req: Request, res: Response) => {
   try {
     const { title, description, status, dueDate, clientId } = req.body;
 
-    // Validação básica de obrigatoriedade
     if (!title || !clientId) {
-      return res.status(400).json({ error: 'Título e Cliente são obrigatórios.' });
+      return res.status(400).json({ error: 'Titulo e cliente sao obrigatorios.' });
     }
 
     const task = await prisma.task.create({
       data: {
         title,
         description,
-        status: status || "PENDING",
+        status: status || 'PENDING',
         dueDate: dueDate ? new Date(dueDate) : null,
         clientId: Number(clientId)
       }
     });
 
+    logInfo('task.create.success', { taskId: task.id, clientId: Number(clientId) });
     return res.status(201).json(task);
   } catch (error) {
-    console.error("Erro no createTask:", error);
+    logError('task.create.error', error);
     return res.status(500).json({ error: 'Erro ao criar tarefa.' });
   }
 };
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    // Pegamos os filtros da URL (Ex: ?status=DONE&clientId=1)
     const { status, clientId } = req.query;
-    const userId = (req as any).user.id; // Padrão de segurança que definimos
+    const userId = (req as any).user.id;
 
     const tasks = await prisma.task.findMany({
       where: {
-        // Filtro 1: A tarefa sempre deve ser de um cliente que pertence ao usuário logado
         client: {
-          userId: userId
+          userId
         },
-        // Filtro 2: Se o usuário enviou clientId na URL, filtramos
         ...(clientId && { clientId: Number(clientId) }),
-        // Filtro 3: Se o usuário enviou status, filtramos (o Prisma valida o Enum)
         ...(status && { status: status as any })
       },
-      // Incluimos os dados basicos do cliente para facilitar a exibicao no frontend
       include: {
         client: {
           select: {
@@ -58,7 +55,7 @@ export const getTasks = async (req: Request, res: Response) => {
 
     return res.json(tasks);
   } catch (error) {
-    console.error("Erro no getTasks:", error);
+    logError('task.list.error', error);
     return res.status(500).json({ error: 'Erro ao buscar tarefas filtradas.' });
   }
 };
@@ -69,7 +66,6 @@ export const updateTask = async (req: Request, res: Response) => {
     const { title, description, status, dueDate, clientId } = req.body;
     const userId = (req as any).user.id;
 
-    // Primeiro garantimos que a tarefa pertence a um cliente do usuario logado
     const taskExists = await prisma.task.findFirst({
       where: {
         id: Number(id),
@@ -80,10 +76,10 @@ export const updateTask = async (req: Request, res: Response) => {
     });
 
     if (!taskExists) {
+      logWarn('task.update.not_found', { taskId: Number(id), userId });
       return res.status(404).json({ error: 'Tarefa nao encontrada.' });
     }
 
-    // Se o cliente for alterado, validamos se o novo cliente tambem pertence ao usuario
     if (clientId) {
       const clientExists = await prisma.client.findFirst({
         where: {
@@ -93,6 +89,7 @@ export const updateTask = async (req: Request, res: Response) => {
       });
 
       if (!clientExists) {
+        logWarn('task.update.invalid_client', { taskId: Number(id), clientId: Number(clientId), userId });
         return res.status(404).json({ error: 'Cliente nao encontrado para vincular a tarefa.' });
       }
     }
@@ -116,9 +113,10 @@ export const updateTask = async (req: Request, res: Response) => {
       }
     });
 
+    logInfo('task.update.success', { taskId: updatedTask.id, userId });
     return res.json(updatedTask);
   } catch (error) {
-    console.error("Erro no updateTask:", error);
+    logError('task.update.error', error, { taskId: Number(req.params.id) });
     return res.status(500).json({ error: 'Erro ao atualizar tarefa.' });
   }
 };
@@ -126,17 +124,18 @@ export const updateTask = async (req: Request, res: Response) => {
 export const updateTaskStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body; // O usuário envia "PENDING", "DOING" ou "DONE"
+    const { status } = req.body;
 
     const updatedTask = await prisma.task.update({
       where: { id: Number(id) },
-      data: { status } // O Prisma valida automaticamente se o valor existe no Enum
+      data: { status }
     });
 
+    logInfo('task.update_status.success', { taskId: updatedTask.id, status });
     return res.json(updatedTask);
   } catch (error) {
-    // Se o status for inválido, o Prisma lança um erro específico
-    return res.status(400).json({ error: 'Status inválido. Use PENDING, DOING ou DONE.' });
+    logWarn('task.update_status.invalid', { taskId: Number(req.params.id), status: req.body?.status });
+    return res.status(400).json({ error: 'Status invalido. Use PENDING, DOING ou DONE.' });
   }
 };
 
@@ -148,11 +147,10 @@ export const deleteTask = async (req: Request, res: Response) => {
       where: { id: Number(id) }
     });
 
-    // 204 significa "Sucesso, mas sem conteúdo para exibir"
+    logInfo('task.delete.success', { taskId: Number(id) });
     return res.status(204).send();
-    
   } catch (error) {
-    console.error("Erro no deleteTask:", error);
-    return res.status(404).json({ error: 'Tarefa não encontrada ou já removida.' });
+    logWarn('task.delete.not_found', { taskId: Number(req.params.id) });
+    return res.status(404).json({ error: 'Tarefa nao encontrada ou ja removida.' });
   }
 };

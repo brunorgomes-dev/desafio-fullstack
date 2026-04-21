@@ -4,7 +4,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down -v",
+    "test:prepare": "node ./test/scripts/migrate-with-retry.js",
+    "test": "dotenv -e .env.test -- vitest run",
+    "test:watch": "dotenv -e .env.test -- vitest",
+    "test:ci": "npm run test:prepare && dotenv -e .env.test -- vitest run"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +25,12 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
+    "@types/supertest": "^6.0.3",
+    "dotenv-cli": "^10.0.0",
+    "supertest": "^7.1.4",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

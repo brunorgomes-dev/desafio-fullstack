@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
+
 import prisma from '../config/database';
 import { getAddressByCep } from '../services/cepService';
+import { logError, logInfo, logWarn } from '../utils/logger';
 
 export const createClient = async (req: Request, res: Response) => {
   try {
-    // Agora desestruturamos os novos campos vindos da migration
     const { name, email, phone, cep, street, number, neighbor, city, state } = req.body;
     const userId = (req as any).user.id;
 
@@ -23,9 +24,10 @@ export const createClient = async (req: Request, res: Response) => {
       }
     });
 
+    logInfo('client.create.success', { userId, clientId: client.id });
     return res.status(201).json(client);
   } catch (error) {
-    console.error("Erro no createClient:", error);
+    logError('client.create.error', error);
     return res.status(500).json({ error: 'Erro ao cadastrar cliente.' });
   }
 };
@@ -35,7 +37,8 @@ export const getClients = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id;
 
     if (!userId) {
-      return res.status(401).json({ error: 'Usuário não autenticado.' });
+      logWarn('client.list.unauthenticated');
+      return res.status(401).json({ error: 'Usuario nao autenticado.' });
     }
 
     const clients = await prisma.client.findMany({
@@ -45,8 +48,7 @@ export const getClients = async (req: Request, res: Response) => {
 
     return res.json(clients);
   } catch (error) {
-    console.error("Erro no getClients:", error);
-    // Verificamos se os headers já foram enviados antes de tentar enviar o erro
+    logError('client.list.error', error);
     if (!res.headersSent) {
       return res.status(500).json({ error: 'Erro ao buscar clientes.' });
     }
@@ -60,10 +62,10 @@ export const updateClient = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id;
 
     if (!userId) {
-      return res.status(401).json({ error: 'Usuário não autenticado.' });
+      logWarn('client.update.unauthenticated', { clientId: Number(id) });
+      return res.status(401).json({ error: 'Usuario nao autenticado.' });
     }
 
-    // Primeiro garantimos que o cliente pertence ao usuário logado
     const clientExists = await prisma.client.findFirst({
       where: {
         id: Number(id),
@@ -72,10 +74,10 @@ export const updateClient = async (req: Request, res: Response) => {
     });
 
     if (!clientExists) {
-      return res.status(404).json({ error: 'Cliente não encontrado.' });
+      logWarn('client.update.not_found', { userId, clientId: Number(id) });
+      return res.status(404).json({ error: 'Cliente nao encontrado.' });
     }
 
-    // Atualizamos todos os campos editáveis mantendo o mesmo padrão do cadastro
     const updatedClient = await prisma.client.update({
       where: { id: Number(id) },
       data: {
@@ -91,28 +93,29 @@ export const updateClient = async (req: Request, res: Response) => {
       }
     });
 
+    logInfo('client.update.success', { userId, clientId: updatedClient.id });
     return res.json(updatedClient);
   } catch (error) {
-    console.error("Erro no updateClient:", error);
+    logError('client.update.error', error, { clientId: Number(req.params.id) });
     return res.status(500).json({ error: 'Erro ao atualizar cliente.' });
   }
 };
 
 export const searchCep = async (req: Request, res: Response) => {
   try {
-    // Garantimos que o CEP seja tratado sempre como texto antes da limpeza
     const cep = String(req.params.cep || '');
-    console.log("CEP Recebido no Backend:", cep);
-    const cleanCep = cep.replace(/\D/g, ''); // Limpa pontos e traços
+    const cleanCep = cep.replace(/\D/g, '');
 
     if (cleanCep.length !== 8) {
-      return res.status(400).json({ error: 'CEP inválido.' });
+      logWarn('client.cep.invalid', { cep });
+      return res.status(400).json({ error: 'CEP invalido.' });
     }
 
     const data = await getAddressByCep(cleanCep);
 
     if (data.erro) {
-      return res.status(404).json({ error: 'CEP não encontrado.' });
+      logWarn('client.cep.not_found', { cep: cleanCep });
+      return res.status(404).json({ error: 'CEP nao encontrado.' });
     }
 
     return res.json({
@@ -122,6 +125,7 @@ export const searchCep = async (req: Request, res: Response) => {
       state: data.uf
     });
   } catch (error) {
+    logError('client.cep.error', error, { cep: req.params.cep });
     return res.status(500).json({ error: 'Erro ao consultar CEP.' });
   }
 };
@@ -129,15 +133,14 @@ export const searchCep = async (req: Request, res: Response) => {
 export const deleteClient = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
     await prisma.client.delete({
       where: { id: Number(id) }
     });
 
+    logInfo('client.delete.success', { clientId: Number(id) });
     return res.status(204).send();
-    
   } catch (error) {
-    console.error("Erro no deleteClient:", error);
-    return res.status(404).json({ error: 'Cliente não encontrado.' });
+    logWarn('client.delete.not_found', { clientId: Number(req.params.id) });
+    return res.status(404).json({ error: 'Cliente nao encontrado.' });
   }
 };
