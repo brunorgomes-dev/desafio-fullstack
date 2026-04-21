@@ -210,7 +210,7 @@ const NotificationToast = ({
 export const Dashboard = () => {
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('clients');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -272,7 +272,7 @@ export const Dashboard = () => {
       setClients(response.data);
     } catch (error) {
       console.error('Erro ao carregar clientes', error);
-      showNotification('error', 'Erro ao carregar', 'Nao foi possivel buscar a lista de clientes.');
+      showNotification('error', 'Erro ao carregar', 'Não foi possível buscar a lista de clientes.');
     }
   };
 
@@ -292,7 +292,7 @@ export const Dashboard = () => {
       setTasks(response.data);
     } catch (error) {
       console.error('Erro ao carregar tarefas', error);
-      showNotification('error', 'Erro ao carregar', 'Nao foi possivel buscar a lista de tarefas.');
+      showNotification('error', 'Erro ao carregar', 'Não foi possível buscar a lista de tarefas.');
     }
   };
 
@@ -463,7 +463,7 @@ export const Dashboard = () => {
           state: response.data.state || ''
         }));
       } catch (error) {
-        showNotification('error', 'CEP nao encontrado', 'Verifique o CEP informado e tente novamente.');
+        showNotification('error', 'CEP não encontrado', 'Verifique o CEP informado e tente novamente.');
       } finally {
         setLoadingCep(false);
       }
@@ -487,7 +487,7 @@ export const Dashboard = () => {
 
       loadClients();
     } catch (error) {
-      showNotification('error', 'Erro ao salvar', 'Nao foi possivel salvar o cliente no momento.');
+      showNotification('error', 'Erro ao salvar', 'Não foi possível salvar o cliente no momento.');
     }
   };
 
@@ -501,7 +501,7 @@ export const Dashboard = () => {
       showNotification('success', 'Cliente excluido', 'O cliente foi removido com sucesso.');
       loadClients();
     } catch (error) {
-      showNotification('error', 'Erro ao excluir', 'Nao foi possivel excluir este cliente agora.');
+      showNotification('error', 'Erro ao excluir', 'Não foi possível excluir este cliente agora.');
     }
   };
 
@@ -526,7 +526,7 @@ export const Dashboard = () => {
       if (taskModalMode === 'edit' && selectedTask) {
         await api.put(`/tasks/${selectedTask.id}`, payload);
         closeTaskModal();
-        showNotification('success', 'Tarefa atualizada', 'As informacoes da tarefa foram salvas com sucesso.');
+        showNotification('success', 'Tarefa atualizada', 'As informações da tarefa foram salvas com sucesso.');
       } else {
         await api.post('/tasks', payload);
         closeTaskModal();
@@ -535,7 +535,7 @@ export const Dashboard = () => {
 
       loadTasks();
     } catch (error) {
-      showNotification('error', 'Erro ao salvar', 'Nao foi possivel salvar a tarefa no momento.');
+      showNotification('error', 'Erro ao salvar', 'Não foi possível salvar a tarefa no momento.');
     }
   };
 
@@ -549,7 +549,7 @@ export const Dashboard = () => {
       showNotification('success', 'Tarefa excluida', 'A tarefa foi removida com sucesso.');
       loadTasks();
     } catch (error) {
-      showNotification('error', 'Erro ao excluir', 'Nao foi possivel excluir esta tarefa agora.');
+      showNotification('error', 'Erro ao excluir', 'Não foi possível excluir esta tarefa agora.');
     }
   };
 
@@ -596,7 +596,7 @@ export const Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard</h2>
-          <p className="text-gray-500 mt-1">Uma visao rapida dos seus relacionamentos e dados principais.</p>
+          <p className="text-gray-500 mt-1">Uma visão rápida dos seus relacionamentos e dados principais.</p>
         </div>
       </div>
 
@@ -620,7 +620,7 @@ export const Dashboard = () => {
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-emerald-500">Cobertura</p>
               <h3 className="text-4xl font-black text-gray-900 mt-3">{clientsWithLocation}</h3>
-              <p className="text-sm text-gray-500 mt-2">Clientes com endereco preenchido automaticamente.</p>
+              <p className="text-sm text-gray-500 mt-2">Clientes com endereço preenchido automaticamente.</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
               <MapPin size={24} />
@@ -646,11 +646,10 @@ export const Dashboard = () => {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-xl p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Resumo rapido</p>
-            <h3 className="text-xl font-extrabold text-gray-900 mt-2">Seu ambiente esta pronto para operacao</h3>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Resumo rápido</p>
+            <h3 className="text-xl font-extrabold text-gray-900 mt-2">Seu ambiente está pronto para operação</h3>
             <p className="text-sm text-gray-500 mt-2 max-w-2xl">
-              Use a aba de clientes para criar, editar e manter sua base atualizada. A navegacao lateral muda o
-              conteudo da tela sem recarregar a aplicacao.
+              Use a aba de clientes para criar, editar e manter sua base atualizada.
             </p>
           </div>
 
@@ -673,7 +672,7 @@ export const Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Clientes</h2>
-          <p className="text-gray-500 mt-1">Gestao de contatos e enderecos integrados.</p>
+          <p className="text-gray-500 mt-1">Gestão de contatos e endereços integrados.</p>
         </div>
 
         <button
@@ -706,9 +705,9 @@ export const Dashboard = () => {
             <thead>
               <tr className="text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50/50">
                 <th className="px-6 py-4">Nome</th>
-                <th className="px-6 py-4">Localizacao</th>
+                <th className="px-6 py-4">Localização</th>
                 <th className="px-6 py-4">Contato</th>
-                <th className="px-6 py-4 text-center">Acoes</th>
+                <th className="px-6 py-4 text-center">Ações</th>
               </tr>
             </thead>
 
@@ -777,7 +776,7 @@ export const Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Tarefas</h2>
-          <p className="text-gray-500 mt-1">Organize entregas, acompanhe status e filtre por cliente com fluidez.</p>
+          <p className="text-gray-500 mt-1">Organize entregas, acompanhe status e filtre por cliente com fluídez.</p>
         </div>
 
         <button
@@ -795,19 +794,19 @@ export const Dashboard = () => {
         <div className="bg-white rounded-2xl border border-blue-100 shadow-xl shadow-blue-50/70 p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-blue-500">Total</p>
           <h3 className="text-4xl font-black text-gray-900 mt-3">{tasks.length}</h3>
-          <p className="text-sm text-gray-500 mt-2">Tarefas visiveis com os filtros atuais.</p>
+          <p className="text-sm text-gray-500 mt-2">Tarefas visíveis com os filtros atuais.</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-100 shadow-xl shadow-slate-50/70 p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Pendentes</p>
           <h3 className="text-4xl font-black text-gray-900 mt-3">{pendingTasksCount}</h3>
-          <p className="text-sm text-gray-500 mt-2">Itens aguardando inicio ou definicao de proximo passo.</p>
+          <p className="text-sm text-gray-500 mt-2">Itens aguardando início ou definição de próximo passo.</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-amber-100 shadow-xl shadow-amber-50/70 p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-amber-500">Em andamento</p>
           <h3 className="text-4xl font-black text-gray-900 mt-3">{doingTasksCount}</h3>
-          <p className="text-sm text-gray-500 mt-2">Tarefas que ja entraram em execucao.</p>
+          <p className="text-sm text-gray-500 mt-2">Tarefas que ja entraram em execução.</p>
         </div>
       </div>
 
@@ -861,7 +860,7 @@ export const Dashboard = () => {
                 <th className="px-6 py-4">Cliente</th>
                 <th className="px-6 py-4">Prazo</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-center">Acoes</th>
+                <th className="px-6 py-4 text-center">Ações</th>
               </tr>
             </thead>
 
@@ -1323,7 +1322,7 @@ export const Dashboard = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-500 uppercase">Descricao</label>
+            <label className="text-xs font-bold text-gray-500 uppercase">Descrição</label>
             <textarea
               rows={4}
               value={taskFormData.description}
@@ -1351,11 +1350,11 @@ export const Dashboard = () => {
         <div className="space-y-6">
           <div className="space-y-2">
             <p className="text-sm text-gray-600">
-              Voce tem certeza que deseja excluir a tarefa{' '}
+              Você tem certeza que deseja excluir a tarefa{' '}
               <span className="font-bold text-gray-800">{taskToDelete?.title}</span>?
             </p>
             <p className="text-sm text-gray-400">
-              Essa acao remove o item da lista e nao podera ser desfeita por esta tela.
+              Essa ação remove o item da lista e não poderá ser desfeita por esta tela.
             </p>
           </div>
 
@@ -1373,7 +1372,7 @@ export const Dashboard = () => {
               onClick={handleDeleteTask}
               className="w-full py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95 cursor-pointer"
             >
-              Confirmar exclusao
+              Confirmar exclusão
             </button>
           </div>
         </div>
